@@ -1,0 +1,144 @@
+---
+title: "Contexto del proyecto — Cuenta de activos del bosque de Guatemala 2013–2024"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    theme: flatly
+    highlight: tango
+---
+
+Documento vivo de la base de conocimiento del proyecto. Todo chat del proyecto parte de aquí.
+Se reemplaza por una versión nueva cada vez que cambia una decisión, el estado o un pendiente.
+
+**Versión:** 1.2 · **Actualizado:** 2026-09-21 · **Base:** presentación final corregida (cuenta-bosque-propuesta-final.pptx, 15 diapositivas) · **Responsable:** Yonshual (BANGUAT, Sección de Cuentas Ambientales)
+
+---
+
+## 1. Qué es el proyecto
+
+Revisión integral, reproceso y reestructuración de la cuenta de activos del bosque de Guatemala,
+período 2013–2024, bajo el marco SCAE-MC, con referencia al Forest Account Sourcebook y a FAO FRA.
+
+Dos cuentas, ambas en alcance:
+
+- **Cuenta de activos de tierras forestales** (hectáreas).
+- **Cuenta de activos de recursos madereros** (metros cúbicos de volumen en pie).
+
+Alcance territorial: todo el país, no solo tierras boscosas. Desagregación nacional y departamental.
+Bosque en su máxima desagregación según el Sourcebook, con distinción natural / plantación.
+
+Fuera de alcance en esta fase: valoración monetaria, servicios ecosistémicos (de momento, pero se irá incorporando)
+
+## 2. Situación de partida
+
+- Existe un avance sustantivo en Excel, elaborado por una compañera que ya no está en la institución.
+- Ninguna cifra se ha publicado: el trabajo es control de calidad previo a la publicación oficial.
+- Hallazgos de la revisión: cifras que no reproducen el dato oficial en varios años; definiciones mal
+  aplicadas en mortalidad, residuos, porcentajes, coeficientes, dinámicas y alcance de los manuales;
+  fórmulas imposibles de rastrear; el archivo "se parcha" con cada incorporación y cualquier cambio
+  rompe lo anterior.
+- El diagnóstico apunta al método, no a la persona.
+
+## 3. Decisiones tomadas
+
+| Tema | Decisión |
+|---|---|
+| Enfoque | **Reproceso total, descarte cero.** Se rehace todo desde la fuente original; se conservan fuentes, estructura, decisiones previas y la serie previa como referencia de contraste. |
+| Promesa de validación | Explicar el 100 % de las diferencias entre resultado nuevo, avance previo y cifra oficial. |
+| Referencias de conciliación | (1) cifra oficial INAB, (2) serie del avance previo (línea base congelada), (3) identidad contable y cierre territorial. |
+| Catálogo de diferencias | Coincide · difiere por definición corregida · difiere por insumo o versión · difiere por error de cálculo · difiere sin causa identificada (no se publica abierta). |
+| Profundidad de revisión | Estratificada por riesgo: nivel 1 exhaustivo (mortalidad, residuos, coeficientes, dinámicas, manuales, partidas de mayor peso); nivel 2 verificación cruzada; nivel 3 muestreo. El reproceso sí es uniforme. |
+| Plazo | 14 meses. Con profundidad uniforme serían más de 16. |
+| Precedencia entre fuentes (propuesta, por validar) | Frontera bosque / no bosque: mapa oficial nacional (INAB). Desagregación del no bosque y destino de transiciones: mapa de cobertura y uso del MAGA. Partidas y tratamiento contable: SCAE. Categorías reportables: FAO. |
+| Transiciones | INAB solo reporta aumentos y reducciones; la clasificación de transiciones sale de cruzar INAB con MAGA. Flujos brutos, nunca cambio neto. |
+| Incendios | El bosque quemado sigue siendo bosque: pérdida catastrófica, no cambio de uso. |
+| Estratificación | Tipo de bosque y natural / plantación se fijan en F2 (definición de conceptos), antes de F3; sin ello no se puede derivar volumen. |
+| Coherencia con flujos | La extracción del activo debe coincidir con la del COU físico ya compilado. |
+| Formatos | Lo que lee una persona: prosa (Word o Markdown). Lo que lee el sistema: CSV plano. |
+| Orden de arranque | El diagnóstico integral va **antes** de fijar definiciones: el inventario del trabajo existente produce la lista de términos, supuestos y componentes que la fase de definición debe resolver. |
+| Fuente geoespacial | Los mapas oficiales (INAB, MAGA) son la fuente. Landsat y Sentinel solo para control de calidad y muestra de referencia de estimación de área; no se reclasifica imagen. |
+| Modelo de hechos | Una sola tabla contable genérica (FACT_CUENTA_ACTIVO: activo · territorio · año · partida) común a todas las cuentas; bosque aporta tablas de detalle (FACT_FOREST_AREA, FACT_TIMBER_VOLUME). Dimensiones: fuente, tiempo, espacio con vigencia, partida, unidad, clase (concordancia), parámetro. Tabla de calidad y metadatos. |
+| Numeración | Fases F1–F7 (compilación) y etapas S1–S5 (sistema). Es la misma numeración en toda la presentación. |
+| Regla de secuencia | Nada se reprocesa en forma definitiva antes de que las definiciones estén corregidas y validadas. El diagnóstico sí puede comparar el avance previo contra lo oficial, porque no recalcula. |
+
+## 4. Sistema de datos — SICA (Sistema Integrado de Cuentas Ambientales)
+
+Producto institucional propio, pensado para las cuentas de toda la sección, no solo bosque.
+
+- **Motor:** Python (GDAL, rasterio, geopandas, exactextract); Google Earth Engine para extracción pesada; QGIS para inspección y cartografía.
+- **Registro:** PostgreSQL + PostGIS. Dimensiones compartidas (territorio con vigencia temporal, tiempo, activo, partida, unidad, fuente, actividad, producto) y tablas de hechos genéricas (cuenta de activos y flujos del COU), más tablas de detalle propias de cada cuenta; versión en cada registro.
+- **Transformaciones y pruebas:** dbt-core. Pruebas en cada ejecución: cierre territorial, identidad contable, conciliación oficial, contraste con la línea base.
+- **Salidas:** Excel generado (nunca editado a mano), documento en Quarto, tablero estático.
+- **Control de versiones:** Git.
+- Ninguna herramienta requiere licencia de pago. La ruta crítica es la gestión de infraestructura, permisos de instalación y acceso de red a repositorios de paquetes.
+
+## 5. Fases y cronograma (14 meses)
+
+Fuente: cronograma de la presentación final. Las diapositivas de cada fase ya indican los mismos meses.
+
+| Código | Fase | Meses | Contenido |
+|---|---|---|---|
+| F1 | Diagnóstico integral del trabajo existente | 1–2 | Inventario (archivos, bases, capas, scripts), trazabilidad actual (fórmulas, fuentes, versiones), consistencia contra cifras oficiales, brechas. Producto: matriz de diagnóstico, decisiones y plan de reconstrucción. Criterio de salida: cada componente clasificado, con responsable y acción. |
+| F2 | Definición de conceptos (consolidación conceptual y metodológica) | 2–3 | Definiciones, clasificaciones (cobertura, uso, tipos de bosque), unidades, reglas de stocks, flujos y supuestos. Concordancia, precedencia, parámetros, cifras de contraste. Producto: marco metodológico versionado. |
+| F3 | Revisión y reconstrucción geoespacial | 3–6 | Incluye la ingesta y el linaje de fuentes (antes fase propia). Fuentes, estandarización (CRS, resolución, grid, NoData), procesamiento, cambio (transiciones, pérdida, ganancia, persistencia), estadísticas departamentales y nacionales. |
+| F4 | Matriz de transición y piloto | 6–8 | Cruce píxel a píxel; un período y un departamento de extremo a extremo. |
+| F5 | Cuenta de tierras forestales | 8–10 | Serie 2013–2024. |
+| F6 | Cuenta de recursos madereros | 10–12 | Serie 2013–2024. |
+| F7 | Validación y difusión | 12–14 | Control de calidad, conciliación final, publicación. |
+
+Sistema de datos, en paralelo:
+
+| Código | Etapa | Meses |
+|---|---|---|
+| S1 | Diseño del modelo de datos (modelado: entidades, relaciones, llaves, catálogos) | 1–2 |
+| S2 | Infraestructura, permisos y accesos — **ruta crítica** | 1–3 |
+| S3 | Carga de dimensiones, parámetros y fuentes originales | 3–4 |
+| S4 | Motor, ETL, transformaciones y pruebas | 4–7 |
+| S5 | Salidas, respaldos, permisos y puesta en operación | 11–13 |
+
+Transversales: conciliación (meses 3–14), documentación (1–14).
+
+Entregable del sistema: base relacional + base espacial + diccionario de datos + scripts ETL + manual de actualización.
+
+Hitos de referencia (internos; la presentación final no los muestra): M2 diagnóstico cerrado · M3 marco metodológico validado · M4 base de datos operativa · M7 motor y pruebas activos · M8 transiciones validadas · M10 serie de tierras · M12 cuenta de madera · M14 publicación y tablero.
+
+## 6. Estado actual
+
+- **Fase en curso:** F1 — Diagnóstico integral (mes 1). En paralelo: S1 diseño del modelo y S2 solicitud de infraestructura.
+- **Entregado:** presentación final de la propuesta; guía de trabajo de definiciones (ahora aplica a F2); plantilla de ficha de definición; plantillas CSV de concordancia, parámetros y cifras oficiales; plantilla de bitácora.
+- **Siguiente paso:** congelar la línea base y armar la matriz de diagnóstico (inventario de componentes del avance previo).
+- **Ajuste de la guía:** la lista de términos a definir, que la guía ubicaba en su semana 1, ahora sale de la matriz de diagnóstico de F1.
+
+## 7. Hallazgos técnicos previos relevantes
+
+- Área de píxel: se usó 0.09 ha/píxel en lugar de ~0.0862 ha/píxel, sobreestimando ~162,000 ha a escala nacional. Usar área geodésica o proyección equivalente en área.
+- Mapa de cobertura 2020 frente a ráster de dinámica: rejillas casi idénticas (cruce directo sin remuestreo), discrepancia agregada de 0.40 %, brecha de ~34,000 ha probablemente por máscara de nubes.
+- Referencias oficiales: ~3.6 millones de ha de bosque, 33.3 % del territorio, cambio neto −52,736 ha en 2016–2020.
+
+## 8. Decisiones pendientes
+
+- Nombre definitivo del sistema (SICA es provisional).
+- Dimensionamiento de equipo y servidor (requiere tamaño de los rásteres y número de años).
+- Validación institucional de la regla de precedencia.
+
+## 9. Mapa de chats del proyecto
+
+| Chat | Cubre | Fases |
+|---|---|---|
+| 00 · Coordinación | Estado general, decisiones transversales, actualización de este documento | Todas |
+| 01 · Diagnóstico y definiciones | Matriz de diagnóstico, fichas, concordancia, precedencia, supuestos | F1, F2 |
+| 02 · Geoespacial | Fuentes, linaje, rejilla, área de píxel, MMU, matriz de transición, piloto | F3, F4 |
+| 03 · Sistema SICA | Modelo de datos, DDL, infraestructura, dbt, pruebas, salidas | S1–S5 |
+| 04 · Cuenta de tierras | Partidas, cierre territorial, conciliación de superficie | F5 |
+| 05 · Cuenta de madera | Volumen por hectárea, mortalidad, residuos, coherencia con COU | F6 |
+| 06 · Difusión | Documento metodológico, tablero, narrativa, presentaciones | F7 |
+
+## 10. Protocolo de trabajo entre chats
+
+1. Cada chat abre leyendo este documento; no se repite contexto a mano.
+2. Cada chat cierra su sesión con un **resumen de cierre**: decisiones tomadas, entregables producidos, pendientes.
+3. Las decisiones del resumen se pasan a este documento (secciones 3, 6 y 8) y se sube la versión nueva al proyecto, reemplazando la anterior.
+4. Si una decisión tomada en un chat afecta a otro, se registra aquí; los chats no se leen entre sí.
+
